@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 174 50% 40%; /* Bluish-green background */
+    --foreground: 0 0% 100%; /* Light text color */
+    --card: 174 50% 45%; /* Slightly darker bluish-green for cards */
+    --card-foreground: 0 0% 100%; /* Light card text color */
+    --popover: 174 50% 45%; /* Similar to card */
+    --popover-foreground: 0 0% 100%; /* Light popover text color */
+    --primary: 174 50% 50%; /* Primary bluish-green */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+    --secondary: 174 50% 60%; /* Lighter bluish-green */
+    --secondary-foreground: 0 0% 100%; /* White text on secondary */
+    --muted: 174 50% 70%; /* Muted bluish-green */
+    --muted-foreground: 0 0% 100%; /* White text on muted */
+    --accent: 174 50% 80%; /* Lighter accent color */
+    --accent-foreground: 0 0% 100%; /* White text on accent */
+    --destructive: 0 84.2% 60.2%; /* Red for destructive actions */
+    --destructive-foreground: 0 0% 98%; /* Light text on destructive */
+    --border: 174 20% 80%; /* Light border, bluish-green */
+    --input: 174 20% 80%; /* Input fields in bluish-green */
+    --ring: 174 50% 40%; /* Ring color matching the background */
+    --chart-1: 174 50% 60%; /* Bluish-green for chart 1 */
+    --chart-2: 173 58% 39%; /* Different greenish hue for chart 2 */
+    --chart-3: 197 37% 24%; /* Deep blue-green for chart 3 */
+    --chart-4: 43 74% 66%; /* Warm accent for chart 4 */
+    --chart-5: 27 87% 67%; /* Warm color for chart 5 */
+    --radius: 0.5rem; /* Rounded corners */
+    --sidebar-background: 174 50% 40%; /* Sidebar background matching primary */
+    --sidebar-foreground: 0 0% 100%; /* Light text for sidebar */
+    --sidebar-primary: 174 50% 45%; /* Darker bluish-green for sidebar primary */
+    --sidebar-primary-foreground: 0 0% 100%; /* Light text on primary sidebar */
+    --sidebar-accent: 174 50% 30%; /* Accent color for sidebar */
+    --sidebar-accent-foreground: 0 0% 100%; /* Light text on sidebar accent */
+    --sidebar-border: 174 20% 80%; /* Lighter border for sidebar */
+    --sidebar-ring: 174 50% 40%; /* Ring color for sidebar */
+  }
+  .dark {
+    --background: 174 30% 20%; /* Darker bluish-green for dark mode */
+    --foreground: 0 0% 100%; /* White text */
+    --card: 174 30% 25%; /* Darker card in dark mode */
+    --card-foreground: 0 0% 100%; /* Light card text in dark mode */
+    --popover: 174 30% 25%; /* Darker popover in dark mode */
+    --popover-foreground: 0 0% 100%; /* Light popover text in dark mode */
+    --primary: 174 30% 30%; /* Darker bluish-green for primary */
+    --primary-foreground: 0 0% 100%; /* Light text on primary in dark mode */
+    --secondary: 174 30% 40%; /* Darker secondary bluish-green */
+    --secondary-foreground: 0 0% 100%; /* White text on secondary in dark mode */
+    --muted: 174 30% 50%; /* Muted bluish-green for dark mode */
+    --muted-foreground: 0 0% 100%; /* Light text on muted in dark mode */
+    --accent: 174 30% 60%; /* Lighter accent for dark mode */
+    --accent-foreground: 0 0% 100%; /* Light text on accent in dark mode */
+    --destructive: 0 62.8% 30.6%; /* Red for destructive actions in dark mode */
+    --destructive-foreground: 0 0% 100%; /* Light text on destructive in dark mode */
+    --border: 174 20% 60%; /* Darker border for dark mode */
+    --input: 174 20% 60%; /* Dark input fields */
+    --ring: 174 30% 20%; /* Ring color in dark mode */
+    --chart-1: 174 50% 50%; /* Bluish-green for chart 1 in dark mode */
+    --chart-2: 173 58% 39%; /* Chart color 2 */
+    --chart-3: 197 37% 24%; /* Deep blue-green for chart 3 */
+    --chart-4: 43 74% 66%; /* Warm color for chart 4 */
+    --chart-5: 27 87% 67%; /* Warm color for chart 5 */
+    --sidebar-background: 174 30% 20%; /* Dark sidebar background */
+    --sidebar-foreground: 0 0% 100%; /* White text for sidebar */
+    --sidebar-primary: 174 30% 25%; /* Dark primary for sidebar */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text on primary sidebar */
+    --sidebar-accent: 174 30% 40%; /* Accent color for sidebar */
+    --sidebar-accent-foreground: 0 0% 100%; /* White text on sidebar accent */
+    --sidebar-border: 174 20% 60%; /* Lighter border for sidebar */
+    --sidebar-ring: 174 30% 20%; /* Ring color for sidebar */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
