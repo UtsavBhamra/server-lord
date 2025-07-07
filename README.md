@@ -262,8 +262,6 @@ The prerequisites and installation instructions are listed in this section
 
 <p align="right">(<a href="#serverlord---efficient-and-scalable-cron-job-monitoring-platform">back to top</a>)</p>
 
-<p align="right">(<a href="#serverlord---efficient-and-scalable-cron-job-monitoring-platform">back to top</a>)</p>
-
 <!-- MARKDOWN LINKS & IMAGES -->
 [Go]: https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white
 [Go-url]: https://golang.org
