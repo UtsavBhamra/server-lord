@@ -262,13 +262,6 @@ The prerequisites and installation instructions are listed in this section
 
 <p align="right">(<a href="#serverlord---efficient-and-scalable-cron-job-monitoring-platform">back to top</a>)</p>
 
-<!-- Other Projects -->
-## Other Projects
-
-1. [Medisphere-HCC-management-portal](https://github.com/UtsavBhamra/Medisphere-HCC-management-portal)
-2. [Course registration Platform with Django](https://github.com/UtsavBhamra/course-registration-platform)
-3. [Blog site and Blog migration for IEEE NITK Corpus](https://github.com/UtsavBhamra/ieee_corpus_blog)
-
 <p align="right">(<a href="#serverlord---efficient-and-scalable-cron-job-monitoring-platform">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
