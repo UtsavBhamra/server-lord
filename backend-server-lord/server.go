@@ -32,7 +32,7 @@ type User struct {
 	ID       int    `json:"id"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
-	Password string `json:"-"` // The "-" means this field won't be included in JSON responses
+	Password string `json:"-"`
 }
 
 type LoginRequest struct {
@@ -70,8 +70,8 @@ type TaskGraphPoint struct {
     UptimePercentage float64   `json:"uptime_percentage"`
 }
 
-// JWT secret key - In production, this should be stored securely
-var jwtSecret = []byte("server-lord-secret")
+// JWT secret key - replace with your token/ use env variable
+var jwtSecret = []byte("{YOUR_JWT_TOKEN}")
 
 var db *pgxpool.Pool
 
@@ -97,7 +97,6 @@ func (c *CustomSpanProcessor) OnEnd(span trace.ReadOnlySpan) {
 		route, startTime.Format(time.RFC3339Nano), endTime.Format(time.RFC3339Nano), duration.Milliseconds(),
 	)
 
-	// Write to stdout only
 	os.Stdout.WriteString(output)
 }
 
@@ -107,14 +106,14 @@ func (c *CustomSpanProcessor) ForceFlush(ctx context.Context) error { return nil
 // Initialize OpenTelemetry with the custom span processor
 func initTracer() func() {
 	tp := trace.NewTracerProvider(
-		trace.WithSpanProcessor(&CustomSpanProcessor{}), // Use custom processor
-		trace.WithResource(resource.Empty()),            // No extra metadata
+		trace.WithSpanProcessor(&CustomSpanProcessor{}), 
+		trace.WithResource(resource.Empty()),           
 	)
 
 	otel.SetTracerProvider(tp)
 
 	return func() {
-		_ = tp.Shutdown(context.Background()) // No logging on shutdown
+		_ = tp.Shutdown(context.Background()) 
 	}
 }
 
@@ -123,15 +122,12 @@ func RequestLogger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 
-		// Log the incoming request
-		log.Printf("➡️  %s %s [FROM: %s]", r.Method, r.URL.Path, r.RemoteAddr)
+		log.Printf("%s %s [FROM: %s]", r.Method, r.URL.Path, r.RemoteAddr)
 
-		// Call the next handler
 		next.ServeHTTP(w, r)
 
-		// Log the time taken
 		duration := time.Since(start)
-		log.Printf("⏱️  %s %s completed in %v", r.Method, r.URL.Path, duration)
+		log.Printf("%s %s completed in %v", r.Method, r.URL.Path, duration)
 	})
 }
 
@@ -140,8 +136,8 @@ func main() {
 	shutdown := initTracer()
 	defer shutdown()
 
-	// Database connection
-	dbURL := "postgres://postgres:postgres@localhost:5432/task_tracker"
+	// Database connection - replace {USER} and {PASSWORD} with corresponding details of your local postgres setup or use environment vars
+	dbURL := "postgres://{USER}:{PASSWORD}@localhost:5432/task_tracker"
 	config, err := pgxpool.ParseConfig(dbURL)
 	if err != nil {
 		log.Fatal("Error parsing the dbURL: ", err)
@@ -165,7 +161,7 @@ func main() {
 
 	// Setup router
 	r := mux.NewRouter()
-	// Add request logger middleware
+
 	r.Use(RequestLogger)
 
 	r.Use(otelmux.Middleware("task-tracker"))
@@ -194,14 +190,13 @@ func main() {
 	
     // Setup CORS
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"}, // Allow all origins - more permissive for development
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
 		AllowCredentials: true,
-		Debug:            true, // Set to false in production
+		Debug:            true,
 	})
 
-	// Wrap router with CORS handler
 	handler := corsHandler.Handler(r)
 
 	// Start server
@@ -210,21 +205,21 @@ func main() {
 		port = "3000"
 	}
 
-	log.Printf("🚀 Server starting on port %s with CORS enabled...\n", port)
-	log.Printf("📌 API endpoints available at http://localhost:%s/api\n", port)
+	log.Printf("Server starting on port %s with CORS enabled...\n", port)
+	log.Printf("API endpoints available at http://localhost:%s/api\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
 
 // Response utilities
 func respondWithError(w http.ResponseWriter, code int, message string) {
-	log.Printf("❌ Error response [%d]: %s", code, message)
+	log.Printf("Error response [%d]: %s", code, message)
 	respondWithJSON(w, code, map[string]string{"error": message})
 }
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, err := json.Marshal(payload)
 	if err != nil {
-		log.Printf("❌ Error marshalling JSON: %v", err)
+		log.Printf("Error marshalling JSON: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -233,7 +228,7 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 
 	if code >= 200 && code < 300 {
-		log.Printf("✅ Success response [%d]", code)
+		log.Printf("Success response [%d]", code)
 	}
 }
 
@@ -280,18 +275,18 @@ func initDB(db *pgxpool.Pool) error {
 		}
 	}
 
-	log.Println("✅ Database schema initialized successfully")
+	log.Println("Database schema initialized successfully")
 	return nil
 }
 
 // Authentication handlers
 func loginHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("📝 Processing login request")
+	log.Println("Processing login request")
 
 	var loginReq LoginRequest
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&loginReq); err != nil {
-		log.Printf("❌ Invalid request payload: %v", err)
+		log.Printf("Invalid request payload: %v", err)
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
@@ -308,11 +303,11 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		if err.Error() == "no rows in result set" {
-			log.Printf("❌ User with email %s not found", loginReq.Email)
+			log.Printf("User with email %s not found", loginReq.Email)
 			respondWithError(w, http.StatusUnauthorized, "Invalid credentials")
 			return
 		}
-		log.Printf("❌ Error retrieving user: %v", err)
+		log.Printf("Error retrieving user: %v", err)
 		respondWithError(w, http.StatusInternalServerError, "Error retrieving user")
 		return
 	}
@@ -320,7 +315,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	// Compare passwords
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(loginReq.Password))
 	if err != nil {
-		log.Printf("❌ Password mismatch for user %s", loginReq.Email)
+		log.Printf("Password mismatch for user %s", loginReq.Email)
 		respondWithError(w, http.StatusUnauthorized, "Invalid credentials")
 		return
 	}
@@ -328,7 +323,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate JWT token
 	token, err := generateToken(user)
 	if err != nil {
-		log.Printf("❌ Error generating token: %v", err)
+		log.Printf("Error generating token: %v", err)
 		respondWithError(w, http.StatusInternalServerError, "Error generating token")
 		return
 	}
@@ -343,16 +338,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	log.Printf("✅ User %s logged in successfully", user.Username)
+	log.Printf("User %s logged in successfully", user.Username)
 	respondWithJSON(w, http.StatusOK, response)
 }
 
 // Token generation function
 func generateToken(user User) (string, error) {
-	// Set token expiration to 24 hours
 	expirationTime := time.Now().Add(24 * time.Hour)
 
-	// Create the JWT claims
 	claims := jwt.MapClaims{
 		"id":       user.ID,
 		"username": user.Username,
@@ -361,10 +354,8 @@ func generateToken(user User) (string, error) {
 		"exp":      expirationTime.Unix(),
 	}
 
-	// Create token with claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	// Sign the token with our secret
 	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
 		return "", err
@@ -376,14 +367,12 @@ func generateToken(user User) (string, error) {
 // JWT Authentication middleware
 func JWTMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Get token from Authorization header
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
 			respondWithError(w, http.StatusUnauthorized, "Authorization header is required")
 			return
 		}
 
-		// The token comes in format "Bearer {token}", we need to extract the {token} part
 		tokenString := ""
 		parts := strings.Split(authHeader, " ")
 		if len(parts) == 2 && parts[0] == "Bearer" {
@@ -393,9 +382,7 @@ func JWTMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// Parse and validate the token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// Validate the algorithm
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
@@ -407,20 +394,17 @@ func JWTMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// Check if token is valid
 		if !token.Valid {
 			respondWithError(w, http.StatusUnauthorized, "Invalid token")
 			return
 		}
 
-		// Token is valid, proceed
 		next(w, r)
 	}
 }
 
-// User handlers
 func createUser(w http.ResponseWriter, r *http.Request) {
-	log.Println("📝 Processing create user request")
+	log.Println("Processing create user request")
 
 	var user struct {
 		Username string `json:"username"`
@@ -430,23 +414,21 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&user); err != nil {
-		log.Printf("❌ Invalid request payload: %v", err)
+		log.Printf("Invalid request payload: %v", err)
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 	defer r.Body.Close()
 
-	log.Printf("👤 Creating user: %s (%s)", user.Username, user.Email)
+	log.Printf("Creating user: %s (%s)", user.Username, user.Email)
 
-	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Printf("❌ Error hashing password: %v", err)
+		log.Printf("Error hashing password: %v", err)
 		respondWithError(w, http.StatusInternalServerError, "Error processing user data")
 		return
 	}
 
-	// Insert user into database with hashed password
 	var userID int
 	err = db.QueryRow(
 		context.Background(),
@@ -454,47 +436,43 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		user.Username, user.Email, string(hashedPassword)).Scan(&userID)
 
 	if err != nil {
-		log.Printf("❌ Error creating user: %v", err)
+		log.Printf("Error creating user: %v", err)
 		respondWithError(w, http.StatusInternalServerError, "Error creating user")
 		return
 	}
 
-	// Create response without password
 	response := map[string]interface{}{
 		"id":       userID,
 		"username": user.Username,
 		"email":    user.Email,
 	}
 
-	log.Printf("✅ User created successfully with ID: %d", userID)
+	log.Printf("User created successfully with ID: %d", userID)
 	respondWithJSON(w, http.StatusCreated, response)
 }
 
-// Task handlers
 func createTask(w http.ResponseWriter, r *http.Request) {
-	log.Println("📝 Processing create task request")
+	log.Println("Processing create task request")
 
 	var task Task
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&task); err != nil {
-		log.Printf("❌ Invalid request payload: %v", err)
+		log.Printf("Invalid request payload: %v", err)
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 	defer r.Body.Close()
 
-	log.Printf("📋 Creating task: %s for user ID: %d", task.Name, task.UserID)
+	log.Printf("Creating task: %s for user ID: %d", task.Name, task.UserID)
 
-	// Validate user exists
 	var exists bool
 	err := db.QueryRow(context.Background(), "SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)", task.UserID).Scan(&exists)
 	if err != nil || !exists {
-		log.Printf("❌ User ID %d does not exist", task.UserID)
+		log.Printf("User ID %d does not exist", task.UserID)
 		respondWithError(w, http.StatusBadRequest, "User does not exist")
 		return
 	}
 
-	// Insert task into database
 	err = db.QueryRow(
 		context.Background(),
 		`INSERT INTO tasks(name, ping_url, user_id, interval, task_number, status) 
@@ -502,18 +480,17 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 		task.Name, task.PingURL, task.UserID, task.Interval, task.TaskNumber, "alive").Scan(&task.ID)
 
 	if err != nil {
-		log.Printf("❌ Error creating task: %v", err)
+		log.Printf("Error creating task: %v", err)
 		respondWithError(w, http.StatusInternalServerError, "Error creating task")
 		return
 	}
 
-	// Fetch the created task to get all fields
 	task, err = getTaskByID(task.ID)
 	if err != nil {
-		log.Printf("❌ Error fetching created task: %v", err)
+		log.Printf("Error fetching created task: %v", err)
 	}
 
-	log.Printf("✅ Task created successfully with ID: %d", task.ID)
+	log.Printf("Task created successfully with ID: %d", task.ID)
 	respondWithJSON(w, http.StatusCreated, task)
 }
 
@@ -521,20 +498,20 @@ func getTask(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     id, err := strconv.ParseInt(vars["id"], 10, 64)
     if err != nil {
-        log.Printf("❌ Invalid task ID: %s", vars["id"])
+        log.Printf("Invalid task ID: %s", vars["id"])
         respondWithError(w, http.StatusBadRequest, "Invalid task ID")
         return
     }
 
-    log.Printf("🔍 Fetching task with ID: %d", id)
+    log.Printf("Fetching task with ID: %d", id)
 
     task, err := getTaskByID(id)
     if err != nil {
         if strings.Contains(err.Error(), "no rows") {
-            log.Printf("❌ Task not found with ID: %d", id)
+            log.Printf("Task not found with ID: %d", id)
             respondWithError(w, http.StatusNotFound, "Task not found")
         } else {
-            log.Printf("❌ Error retrieving task: %v", err)
+            log.Printf("Error retrieving task: %v", err)
             respondWithError(w, http.StatusInternalServerError, "Error retrieving task")
         }
         return
@@ -569,7 +546,7 @@ func getTask(w http.ResponseWriter, r *http.Request) {
         enhancedTask.Metrics.LastChecked = task.LastChecked.Format(time.RFC3339)
     }
 
-    log.Printf("✅ Task fetched successfully: %s (ID: %d)", task.Name, task.ID)
+    log.Printf("Task fetched successfully: %s (ID: %d)", task.Name, task.ID)
     respondWithJSON(w, http.StatusOK, enhancedTask)
 }
 
@@ -577,14 +554,13 @@ func getUserTasks(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     userID, err := strconv.Atoi(vars["user_id"])
     if err != nil {
-        log.Printf("❌ Invalid user ID: %s", vars["user_id"])
+        log.Printf("Invalid user ID: %s", vars["user_id"])
         respondWithError(w, http.StatusBadRequest, "Invalid user ID")
         return
     }
 
-    log.Printf("🔍 Fetching tasks for user ID: %d", userID)
+    log.Printf("Fetching tasks for user ID: %d", userID)
 
-    // Updated query to include metric fields
     rows, err := db.Query(context.Background(), `
         SELECT 
             id, name, ping_url, user_id, last_ping, interval, task_number, status,
@@ -593,7 +569,7 @@ func getUserTasks(w http.ResponseWriter, r *http.Request) {
         WHERE user_id = $1`, userID)
     
     if err != nil {
-        log.Printf("❌ Error querying tasks: %v", err)
+        log.Printf("Error querying tasks: %v", err)
         respondWithError(w, http.StatusInternalServerError, "Error retrieving tasks")
         return
     }
@@ -625,7 +601,7 @@ func getUserTasks(w http.ResponseWriter, r *http.Request) {
             &task.UptimeSeconds,
             &task.DowntimeSeconds,
         ); err != nil {
-            log.Printf("❌ Error scanning task: %v", err)
+            log.Printf("Error scanning task: %v", err)
             continue
         }
         
@@ -655,12 +631,12 @@ func getUserTasks(w http.ResponseWriter, r *http.Request) {
     }
 
     if err = rows.Err(); err != nil {
-        log.Printf("❌ Error iterating tasks: %v", err)
+        log.Printf("Error iterating tasks: %v", err)
         respondWithError(w, http.StatusInternalServerError, "Error retrieving tasks")
         return
     }
 
-    log.Printf("✅ Retrieved %d tasks for user ID: %d", len(enhancedTasks), userID)
+    log.Printf("Retrieved %d tasks for user ID: %d", len(enhancedTasks), userID)
     respondWithJSON(w, http.StatusOK, enhancedTasks)
 }
 
@@ -668,34 +644,34 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.ParseInt(vars["id"], 10, 64)
 	if err != nil {
-		log.Printf("❌ Invalid task ID: %s", vars["id"])
+		log.Printf("Invalid task ID: %s", vars["id"])
 		respondWithError(w, http.StatusBadRequest, "Invalid task ID")
 		return
 	}
 
-	log.Printf("🗑️ Deleting task with ID: %d", id)
+	log.Printf("Deleting task with ID: %d", id)
 
 	result, err := db.Exec(context.Background(), "DELETE FROM tasks WHERE id = $1", id)
 	if err != nil {
-		log.Printf("❌ Error deleting task: %v", err)
+		log.Printf("Error deleting task: %v", err)
 		respondWithError(w, http.StatusInternalServerError, "Error deleting task")
 		return
 	}
 
 	rowsAffected := result.RowsAffected()
 	if rowsAffected == 0 {
-		log.Printf("❌ Task not found with ID: %d", id)
+		log.Printf("Task not found with ID: %d", id)
 		respondWithError(w, http.StatusNotFound, "Task not found")
 		return
 	}
 
 	if rowsAffected == 0 {
-		log.Printf("❌ Task not found with ID: %d", id)
+		log.Printf("Task not found with ID: %d", id)
 		respondWithError(w, http.StatusNotFound, "Task not found")
 		return
 	}
 
-	log.Printf("✅ Task deleted successfully with ID: %d", id)
+	log.Printf("Task deleted successfully with ID: %d", id)
 	respondWithJSON(w, http.StatusOK, map[string]string{"message": "Task deleted successfully"})
 }
 
@@ -703,17 +679,17 @@ func updateTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.ParseInt(vars["id"], 10, 64)
 	if err != nil {
-		log.Printf("❌ Invalid task ID: %s", vars["id"])
+		log.Printf("Invalid task ID: %s", vars["id"])
 		respondWithError(w, http.StatusBadRequest, "Invalid task ID")
 		return
 	}
 
-	log.Printf("✏️ Updating task with ID: %d", id)
+	log.Printf("Updating task with ID: %d", id)
 
 	var task Task
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&task); err != nil {
-		log.Printf("❌ Invalid request payload: %v", err)
+		log.Printf("Invalid request payload: %v", err)
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
@@ -723,10 +699,10 @@ func updateTask(w http.ResponseWriter, r *http.Request) {
 	_, err = getTaskByID(id)
 	if err != nil {
 		if strings.Contains(err.Error(), "no rows") {
-			log.Printf("❌ Task not found with ID: %d", id)
+			log.Printf("Task not found with ID: %d", id)
 			respondWithError(w, http.StatusNotFound, "Task not found")
 		} else {
-			log.Printf("❌ Error retrieving task: %v", err)
+			log.Printf("Error retrieving task: %v", err)
 			respondWithError(w, http.StatusInternalServerError, "Error retrieving task")
 		}
 		return
@@ -740,7 +716,7 @@ func updateTask(w http.ResponseWriter, r *http.Request) {
 		task.Name, task.PingURL, task.Interval, task.TaskNumber, task.Status, id)
 
 	if err != nil {
-		log.Printf("❌ Error updating task: %v", err)
+		log.Printf("Error updating task: %v", err)
 		respondWithError(w, http.StatusInternalServerError, "Error updating task")
 		return
 	}
@@ -748,12 +724,12 @@ func updateTask(w http.ResponseWriter, r *http.Request) {
 	// Fetch updated task
 	updatedTask, err := getTaskByID(id)
 	if err != nil {
-		log.Printf("❌ Error fetching updated task: %v", err)
+		log.Printf("Error fetching updated task: %v", err)
 		respondWithError(w, http.StatusInternalServerError, "Task updated but error retrieving updated data")
 		return
 	}
 
-	log.Printf("✅ Task updated successfully: %s (ID: %d)", updatedTask.Name, updatedTask.ID)
+	log.Printf("Task updated successfully: %s (ID: %d)", updatedTask.Name, updatedTask.ID)
 	respondWithJSON(w, http.StatusOK, updatedTask)
 }
 
@@ -792,18 +768,18 @@ func getUserGraph(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     userID, err := strconv.Atoi(vars["user_id"])
     if err != nil {
-        log.Printf("❌ Invalid user ID: %s", vars["user_id"])
+        log.Printf("Invalid user ID: %s", vars["user_id"])
         respondWithError(w, http.StatusBadRequest, "Invalid user ID")
         return
     }
     
-    log.Printf("📊 Fetching overall graph data for user ID: %d", userID)
+    log.Printf("Fetching overall graph data for user ID: %d", userID)
     
     // First, get all tasks for this user
     rows, err := db.Query(context.Background(), 
         "SELECT id FROM tasks WHERE user_id = $1", userID)
     if err != nil {
-        log.Printf("❌ Error querying user tasks: %v", err)
+        log.Printf("Error querying user tasks: %v", err)
         respondWithError(w, http.StatusInternalServerError, "Error retrieving user tasks")
         return
     }
@@ -813,20 +789,20 @@ func getUserGraph(w http.ResponseWriter, r *http.Request) {
     for rows.Next() {
         var taskID int64
         if err := rows.Scan(&taskID); err != nil {
-            log.Printf("❌ Error scanning task ID: %v", err)
+            log.Printf("Error scanning task ID: %v", err)
             continue
         }
         taskIDs = append(taskIDs, taskID)
     }
 
     if err = rows.Err(); err != nil {
-        log.Printf("❌ Error iterating tasks: %v", err)
+        log.Printf("Error iterating tasks: %v", err)
         respondWithError(w, http.StatusInternalServerError, "Error processing tasks")
         return
     }
 
     if len(taskIDs) == 0 {
-        log.Printf("👀 No tasks found for user ID: %d", userID)
+        log.Printf("No tasks found for user ID: %d", userID)
         respondWithJSON(w, http.StatusOK, map[string]interface{}{
             "points": []struct{}{},
             "user_id": userID,
@@ -836,7 +812,7 @@ func getUserGraph(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // SIMPLIFIED QUERY: Just fetch the actual data points without generating a time series
+    // Fetch the actual data points without generating a time series
     query := `
         SELECT 
             timestamp,
@@ -851,21 +827,19 @@ func getUserGraph(w http.ResponseWriter, r *http.Request) {
         ORDER BY timestamp ASC
     `
 
-    // Execute the query with pgx's native array support
     graphRows, err := db.Query(
         context.Background(),
         query,
-        taskIDs,  // pgxpool automatically handles arrays correctly
+        taskIDs,  
     )
     
     if err != nil {
-        log.Printf("❌ Error querying aggregated graph data: %v", err)
+        log.Printf("Error querying aggregated graph data: %v", err)
         respondWithError(w, http.StatusInternalServerError, "Error retrieving graph data")
         return
     }
     defer graphRows.Close()
 
-    // Prepare response structure
     type GraphPoint struct {
         Timestamp          string  `json:"timestamp"`
         AliveCount         int     `json:"alive_count"`
@@ -878,8 +852,7 @@ func getUserGraph(w http.ResponseWriter, r *http.Request) {
     }
 
     var points []GraphPoint
-    
-    // Process each data point
+
     for graphRows.Next() {
         var (
             timestamp          time.Time
@@ -898,7 +871,7 @@ func getUserGraph(w http.ResponseWriter, r *http.Request) {
             &totalUptimeSeconds,
             &totalDowntimeSeconds,
         ); err != nil {
-            log.Printf("❌ Error scanning graph data: %v", err)
+            log.Printf("Error scanning graph data: %v", err)
             continue
         }
 
@@ -928,7 +901,7 @@ func getUserGraph(w http.ResponseWriter, r *http.Request) {
     }
 
     if err = graphRows.Err(); err != nil {
-        log.Printf("❌ Error iterating graph points: %v", err)
+        log.Printf("Error iterating graph points: %v", err)
         respondWithError(w, http.StatusInternalServerError, "Error processing graph data")
         return
     }
@@ -948,186 +921,10 @@ func getUserGraph(w http.ResponseWriter, r *http.Request) {
         TaskCount: len(taskIDs),
     }
 
-    log.Printf("📊 Retrieved %d actual data points for user ID: %d (covering %d tasks)", 
+    log.Printf("Retrieved %d actual data points for user ID: %d (covering %d tasks)", 
         len(points), userID, len(taskIDs))
     respondWithJSON(w, http.StatusOK, response)
 }
-
-// // old user and task creation handlers
-// func registerHandler(w http.ResponseWriter, r *http.Request) {
-//     // Start a span
-//     ctx, span := otel.Tracer("task-tracker").Start(r.Context(), "registerHandler")
-//     defer span.End() // Make sure the span ends
-
-// 	var user User
-
-// 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-//         http.Error(w, err.Error(), http.StatusBadRequest)
-//         return
-//     }
-
-// 	query := `INSERT INTO users (username, email) VALUES ($1, $2) RETURNING id`
-
-// 	// Measure database query time
-// 	dbCtx, dbSpan := otel.Tracer("task-tracker").Start(ctx, "dbQuery")
-// 	err := db.QueryRow(dbCtx, query, user.Username, user.Email).Scan(&user.ID)
-// 	dbSpan.End()
-
-// 	if err != nil {
-//         dbSpan.RecordError(err)
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-
-//     // Add attributes to DB span
-//     dbSpan.SetAttributes(
-//         attribute.String("query", query),
-//         attribute.String("user", user.Username),
-//     )
-
-// 	// Response time measurement
-// 	_, respSpan := otel.Tracer("task-tracker").Start(ctx, "sendResponse")
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(user)
-// 	respSpan.End() // Ends the response span
-// }
-
-// func createTaskHandler(w http.ResponseWriter, r *http.Request) {
-//     log.Printf("Received request with Content-Type: %s", r.Header.Get("Content-Type"))
-
-//     body, err := io.ReadAll(r.Body)
-//     if err != nil {
-//         log.Printf("Error reading body: %v", err)
-//         http.Error(w, "Error reading request body", http.StatusBadRequest)
-//         return
-//     }
-//     log.Printf("Received body: %s", string(body))
-
-//     // Intermediate struct for JSON decoding (string values)
-//     var rawTask struct {
-//         Name       string `json:"name"`
-//         PingURL    string `json:"pingUrl"`
-//         UserID     string `json:"userId"`
-//         Interval   string `json:"interval"`
-//         TaskNumber string `json:"taskNumber"`
-//     }
-
-//     if err := json.Unmarshal(body, &rawTask); err != nil {
-//         log.Printf("Error decoding JSON: %v", err)
-//         http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
-//         return
-//     }
-
-//     // Convert string values to integers
-//     userID, err := strconv.ParseInt(rawTask.UserID, 10, 64)
-//     if err != nil {
-//         log.Printf("Invalid userId: %v", err)
-//         http.Error(w, "Invalid userId value", http.StatusBadRequest)
-//         return
-//     }
-
-//     interval, err := strconv.Atoi(rawTask.Interval)
-//     if err != nil {
-//         log.Printf("Invalid interval: %v", err)
-//         http.Error(w, "Invalid interval value", http.StatusBadRequest)
-//         return
-//     }
-
-//     taskNumber, err := strconv.Atoi(rawTask.TaskNumber)
-//     if err != nil {
-//         log.Printf("Invalid taskNumber: %v", err)
-//         http.Error(w, "Invalid taskNumber value", http.StatusBadRequest)
-//         return
-//     }
-
-//     // Validate required fields
-//     if rawTask.Name == "" || interval <= 0 || taskNumber <= 0 {
-//         log.Printf("Missing required fields: name=%s, interval=%d, taskNumber=%d", rawTask.Name, interval, taskNumber)
-//         http.Error(w, "Missing or invalid required fields", http.StatusBadRequest)
-//         return
-//     }
-
-//     // Create task object
-//     task := Task{
-//         Name:       rawTask.Name,
-//         PingURL:    rawTask.PingURL,
-//         UserID:     userID,
-//         Interval:   interval,
-//         TaskNumber: taskNumber,
-//     }
-
-//     // Insert into database
-//     query := `INSERT INTO tasks (name, ping_url, user_id, interval, task_number, status)
-//               VALUES ($1, $2, $3, $4, $5, 'alive')
-//               RETURNING id, last_ping`
-
-//     err = db.QueryRow(context.Background(), query, task.Name, task.PingURL, task.UserID, task.Interval, task.TaskNumber).Scan(&task.ID, &task.LastPing)
-//     if err != nil {
-//         log.Printf("Database error: %v", err)
-//         http.Error(w, "Failed to create task", http.StatusInternalServerError)
-//         return
-//     }
-
-//     // Set response
-//     task.Status = "alive"
-//     w.WriteHeader(http.StatusCreated)
-//     w.Header().Set("Content-Type", "application/json")
-//     json.NewEncoder(w).Encode(task)
-// }
-
-// func getUserHandler(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	userID := vars["userId"]
-
-// 	var user User
-// 	userQuery := `SELECT id, username, email FROM users WHERE id = $1`
-// 	err := db.QueryRow(context.Background(), userQuery, userID).Scan(&user.ID, &user.Username, &user.Email)
-// 	if err != nil {
-// 		http.Error(w, "User not found", http.StatusNotFound)
-// 		return
-// 	}
-
-// 	// Get user's tasks
-// 	tasksQuery := `SELECT id, name, ping_url, last_ping, interval, task_number, status
-// 		FROM tasks WHERE user_id = $1`
-// 	rows, err := db.Query(context.Background(), tasksQuery, userID)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	defer rows.Close()
-
-// 	var tasks []Task
-// 	for rows.Next() {
-// 		var task Task
-// 		err := rows.Scan(
-// 			&task.ID,
-// 			&task.Name,
-// 			&task.PingURL,
-// 			&task.LastPing,
-// 			&task.Interval,
-// 			&task.TaskNumber,
-// 			&task.Status,
-// 		)
-// 		if err != nil {
-// 			http.Error(w, err.Error(), http.StatusInternalServerError)
-// 			return
-// 		}
-// 		tasks = append(tasks, task)
-// 	}
-
-// 	response := struct {
-// 		User  User   `json:"user"`
-// 		Tasks []Task `json:"tasks"`
-// 	}{
-// 		User:  user,
-// 		Tasks: tasks,
-// 	}
-
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(response)
-// }
-
 
 // function to handle heartbeats
 func heartbeatHandler(w http.ResponseWriter, r *http.Request) {
@@ -1148,7 +945,7 @@ func heartbeatHandler(w http.ResponseWriter, r *http.Request) {
 	// Instrument database query
 	dbCtx, dbSpan := otel.Tracer("task-tracker").Start(ctx, "dbQuery")
 	err := db.QueryRow(dbCtx, query, taskID).Scan(&id) //Execute the db query
-	dbSpan.End()                                       // Ends the database query span
+	dbSpan.End()                                       
 
 	//Error handling
 	if err != nil {
@@ -1167,7 +964,7 @@ func heartbeatHandler(w http.ResponseWriter, r *http.Request) {
 	_, respSpan := otel.Tracer("task-tracker").Start(ctx, "sendResponse")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Heartbeat received"})
-	respSpan.End() // Ends the response span
+	respSpan.End() 
 }
 
 // taskmonitoring function
@@ -1267,7 +1064,6 @@ func checkTaskStatus() {
 			defer wg.Done()
 			defer func() { <-sem }() // Release semaphore when done
 
-			// Create a child span for this shard
 			shardCtx, shardSpan := otel.Tracer("task-tracker").Start(ctx, fmt.Sprintf("process-shard-%s", shardName))
 			defer shardSpan.End()
 
