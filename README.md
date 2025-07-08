@@ -12,7 +12,6 @@
     - [Installation](#installation)
   - [List of Implemented Features](#list-of-implemented-features)
   - [References Used](#references-used)
-  - [Other Projects](#other-projects)
 </details>
 
 <!-- ABOUT THE PROJECT -->
@@ -51,7 +50,7 @@ The prerequisites and installation instructions are listed in this section
 1. [Download and install Golang](https://go.dev/doc/install)
 2. [Download PostgreSQL](https://www.postgresql.org/download/)
 3. [Download Citus Extension](https://www.citusdata.com/download/)
-4. [npm(Node Package Manager)](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+4. [npm (Node Package Manager)](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
  
 <p align="right">(<a href="#serverlord---efficient-and-scalable-cron-job-monitoring-platform">back to top</a>)</p>
 
@@ -84,7 +83,7 @@ The prerequisites and installation instructions are listed in this section
    ```
 
 4. **Username and Password**
-   In the ```server.go``` file, add your secret jwt key as well as postgres username ans password
+   In the ```server.go``` file, add your secret jwt key as well as postgres username and password
 
 5. **Run the backend server**
    ```bash
