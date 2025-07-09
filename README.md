@@ -37,7 +37,7 @@ ServerLord is a cron job manager application that provides real-time monitoring 
 
 [Link to Report](https://docs.google.com/document/d/1xM8yf07nIHjvkzVDeLrtQjESn9wAhfsDRGIBbzG3Z9s/edit?tab=t.0)
 
-This report outlines the methodology adopted and presents the results achieved during the course of the project.
+This report details the methodology employed and highlights the outcomes achieved throughout the project. It also includes relevant UI screenshots for reference.
 
 <p align="right">(<a href="#serverlord---efficient-and-scalable-cron-job-monitoring-platform">back to top</a>)</p>
 
