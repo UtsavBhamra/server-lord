@@ -18,7 +18,7 @@
 ## About The Project
 
 ServerLord is a cron job manager application that provides real-time monitoring of remote tasks for multiple users, minimizing downtime by offering observability and feedback. Inspired by applications like Dead Man's Snitch and Healthchecks.io, the primary goal of Server Lord is to track and monitor cron jobs or background scripts and trigger health checks if certain jobs become inactive. Efficient cron job monitoring requires handling multiple tasks concurrently, reducing database load, and ensuring minimal latency. Scalable solutions like ServerLord use optimized database queries, concurrency mechanisms, and real-time logging to track tasks without overwhelming system resources.
-![](https://drive.google.com/file/d/12chBo9JNExoitzObdPi79tziSL7SDSlT/view?usp=sharing)
+![](https://private-user-images.githubusercontent.com/140042127/463497595-0fbeb7b1-3e16-40a0-95c4-1a8432cc5ea2.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTIyNTk5NDEsIm5iZiI6MTc1MjI1OTY0MSwicGF0aCI6Ii8xNDAwNDIxMjcvNDYzNDk3NTk1LTBmYmViN2IxLTNlMTYtNDBhMC05NWM0LTFhODQzMmNjNWVhMi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNzExJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDcxMVQxODQ3MjFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT04MDRlNjZmMWZlODZiYWJmZTM2NDI5ZDM5ZDM2YjBjZjY1ODM5YzRjN2Q1YTBlMjNhYjIzOTE4YTEyZjJjMGEyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.TVR8yu5ScdYxHWugwk1hygH0sZDK8dukCTEGBO7DBEg)
 
 <p align="right">(<a href="#serverlord---efficient-and-scalable-cron-job-monitoring-platform">back to top</a>)</p>
 
@@ -172,7 +172,7 @@ The prerequisites and installation instructions are listed in this section
 <summary><strong>Core Authentication & User Management</strong></summary>
 
 <div align="center">
-  <img src="https://drive.google.com/file/d/1dIG5iWh_WtTokdyPBAX3Cd0MdRgWiFrp/view?usp=sharing" width="500">
+  <img src="https://private-user-images.githubusercontent.com/140042127/465419788-3795f15d-cedf-401e-8e42-71542a0c44a4.jpeg?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTIyNjA0NTUsIm5iZiI6MTc1MjI2MDE1NSwicGF0aCI6Ii8xNDAwNDIxMjcvNDY1NDE5Nzg4LTM3OTVmMTVkLWNlZGYtNDAxZS04ZTQyLTcxNTQyYTBjNDRhNC5qcGVnP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI1MDcxMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNTA3MTFUMTg1NTU1WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NTYyNTg3ZjhhMDRhZjQ4M2I3NDcxNGIyMTIzOTE4Mjg0NGZjYmYyNzU0ZDY0Nzc5MTQ2ZGNmMGE1MDFiZjViYyZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.JhHQF90IGHTsWaliB1e6R2ITo8U3f62gyQHj8YcLoFA" width="500">
 </div>
 
 1. **User Registration & Authentication** - Secure user registration with bcrypt password hashing and JWT-based authentication system
@@ -186,7 +186,7 @@ The prerequisites and installation instructions are listed in this section
 <summary><strong>Task Management & Monitoring</strong></summary>
 
 <div align="center">
-   <img src="https://drive.google.com/file/d/1EMeUn6rSVdQnxxeaAbBtyrBd7EizXtD2/view?usp=sharing" width="500">
+   <img src="https://private-user-images.githubusercontent.com/140042127/465419835-3aa4f062-dc9b-4eb2-bb11-ae7b4e50cc09.jpeg?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTIyNjA0NTUsIm5iZiI6MTc1MjI2MDE1NSwicGF0aCI6Ii8xNDAwNDIxMjcvNDY1NDE5ODM1LTNhYTRmMDYyLWRjOWItNGViMi1iYjExLWFlN2I0ZTUwY2MwOS5qcGVnP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI1MDcxMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNTA3MTFUMTg1NTU1WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NzRlNzdiZGUyYTM0M2U2MTZmNDMwOGNjYzlkZGY3ZDRiODkzZjQ4OTBkZjE5NWQ2YTIxNTZmNzk5OWU4OGY4NSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.M9xLmq-Aq97m3tNZCaN0oJLMLOlcf1j7Uh20kucFgf0" width="500">
 </div>
 
 1. **Cron Job Task Creation** - RESTful API endpoints for creating, updating, and deleting monitoring tasks with customizable intervals
@@ -225,7 +225,7 @@ The prerequisites and installation instructions are listed in this section
 <summary><strong>Real-time Monitoring & Analytics</strong></summary>
 
 <div align="center">
-   <img src="https://drive.google.com/file/d/1sRwDb7tm0Adz72zkeaYutz7BluA_l_hU/view?usp=sharing" width="500">
+   <img src="https://private-user-images.githubusercontent.com/140042127/465419872-de53f98c-c540-4b0d-b67d-b108488b43f2.jpeg?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTIyNjA0NTUsIm5iZiI6MTc1MjI2MDE1NSwicGF0aCI6Ii8xNDAwNDIxMjcvNDY1NDE5ODcyLWRlNTNmOThjLWM1NDAtNGIwZC1iNjdkLWIxMDg0ODhiNDNmMi5qcGVnP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI1MDcxMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNTA3MTFUMTg1NTU1WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9MzRmNzA0ZGMyZTZmMmI0ZDQ1OGI3MzBjYzc2M2MwNzViYzJhMTY0N2Y5OTk2OGIyNjcwYzdhODU2MDgzNmM4ZCZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.yuHQFPL80zliBCXIZyCW94wi5Kid5H9u37AgwNisDSo" width="500">
 </div>
 
 1. **Continuous Status Monitoring** - Background service running every 5 seconds to check task health across all shards
@@ -242,7 +242,7 @@ The prerequisites and installation instructions are listed in this section
 <summary><strong>API & Integration Features</strong></summary>
 
 <div align="center">
-   <img src="https://drive.google.com/file/d/10wotUC43PmaoSFhd-qx24D6pApsnAntL/view?usp=sharing" width="500">
+   <img src="https://private-user-images.githubusercontent.com/140042127/465421295-e7b95783-cbe5-44f0-8753-81ae007eef7b.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTIyNjEwODUsIm5iZiI6MTc1MjI2MDc4NSwicGF0aCI6Ii8xNDAwNDIxMjcvNDY1NDIxMjk1LWU3Yjk1NzgzLWNiZTUtNDRmMC04NzUzLTgxYWUwMDdlZWY3Yi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNzExJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDcxMVQxOTA2MjVaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT01ZmQ3NjEzZGYxM2YzNGI5MDAxYTk5NWI4NzkwMzJiMjQ1YzkwMDI0MjQzODU4Nzc5MDA5MDBmZmU3NWZlOGZiJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.yfMqVJW6Of3uBHswPXidIst_meiV2iaK2Gb_QHm1-MY" width="500">
 </div>
 
 1. **RESTful API Design** - Complete CRUD operations for tasks and users following REST principles
